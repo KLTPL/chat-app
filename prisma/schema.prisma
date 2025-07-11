@@ -14,29 +14,28 @@ datasource db {
 }
 
 model User {
-  id String @id @default(uuid())
-  email String @unique
+  id           String    @id @default(uuid())
+  email        String    @unique
   passwordHash String
-  username String @unique
-  name String
-  createdAt DateTime @default(now())
-  updatedAt DateTime @default(now())
-  messages Message[] @relation("userMessages")
+  username     String    @unique
+  name         String
+  createdAt    DateTime  @default(now())
+  updatedAt    DateTime  @default(now())
+  messages     Message[] @relation("userMessages")
 }
 
 model Room {
-  id String @id @default(uuid())
-  name String
-  createdAt DateTime @default(now())
+  id        String    @id @default(uuid())
+  name      String
+  createdAt DateTime  @default(now())
   messages  Message[] @relation("roomMessages")
 }
 
 model Message {
-  id Int @id @default(autoincrement())
+  id      Int    @id @default(autoincrement())
   content String
-  room Room @relation("roomMessages", fields: [roomId], references: [id])
-  roomId String
-  user User @relation("userMessages", fields: [userId], references: [id])
-  userId String
+  room    Room   @relation("roomMessages", fields: [roomId], references: [id])
+  roomId  String
+  user    User   @relation("userMessages", fields: [userId], references: [id])
+  userId  String
 }
-
