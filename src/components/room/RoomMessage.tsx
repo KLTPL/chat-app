@@ -5,7 +5,7 @@ type Props = Message & {
   isOwnMessage: boolean;
 };
 
-function ChatMessage({ isOwnMessage, message, sender, isFromSystem }: Props) {
+function RoomMessage({ isOwnMessage, message, sender, isFromSystem }: Props) {
   return (
     <div
       className={`flex ${
@@ -34,4 +34,4 @@ function ChatMessage({ isOwnMessage, message, sender, isFromSystem }: Props) {
   );
 }
 
-export default ChatMessage;
+export default RoomMessage;
