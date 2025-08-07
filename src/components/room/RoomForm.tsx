@@ -1,10 +1,10 @@
 import React, { useRef, useState } from "react";
-import { Input } from "./ui/input";
-import { Button } from "./ui/button";
+import { Input } from "../ui/input";
+import { Button } from "../ui/button";
 
 type Props = { onSendMessage: (message: string) => void };
 
-function ChatForm({ onSendMessage }: Props) {
+function RoomForm({ onSendMessage }: Props) {
   const [message, setMessage] = useState<string>("");
   const inputRef = useRef<HTMLInputElement>(null);
   function handleSendMessage(ev: React.FormEvent<HTMLFormElement>) {
@@ -32,4 +32,4 @@ function ChatForm({ onSendMessage }: Props) {
   );
 }
 
-export default ChatForm;
+export default RoomForm;
