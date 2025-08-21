@@ -14,22 +14,29 @@ model User {
   username     String    @unique
   name         String
   createdAt    DateTime  @default(now())
-  updatedAt    DateTime  @default(now())
+  updatedAt    DateTime  @default(now()) @updatedAt
   messages     Message[] @relation("userMessages")
+  rooms        Room[]    @relation("UserRoom")
+  roomsAdmin   Room[]    @relation("UserAdminRoom")
 }
 
 model Room {
-  id        String    @id @default(uuid())
-  name      String
-  createdAt DateTime  @default(now())
-  messages  Message[] @relation("roomMessages")
+  id             String    @id @default(uuid())
+  name           String
+  createdAt      DateTime  @default(now())
+  updatedAt      DateTime  @default(now()) @updatedAt
+  messages       Message[] @relation("roomMessages")
+  users          User[]    @relation("UserRoom")
+  administrators User[]    @relation("UserAdminRoom")
+
 }
 
 model Message {
-  id      Int    @id @default(autoincrement())
-  content String
-  roomId  String
-  userId  String
-  room    Room   @relation("roomMessages", fields: [roomId], references: [id])
-  user    User   @relation("userMessages", fields: [userId], references: [id])
+  id        Int      @id @default(autoincrement())
+  content   String
+  createdAt DateTime @default(now())
+  roomId    String
+  userId    String
+  room      Room     @relation("roomMessages", fields: [roomId], references: [id])
+  user      User     @relation("userMessages", fields: [userId], references: [id])
 }
