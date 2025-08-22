@@ -1,28 +1,34 @@
 "use client";
 
 import { fetchRoomList } from "@/server-actions/roomList.server";
-import { Button } from "../ui/button";
-import { useState } from "react";
+import Link from "next/link";
+import { useEffect, useState } from "react";
 
 export default function RoomsList({ userId }: { userId: string }) {
   const [roomsList, setRoomsList] = useState<
     Awaited<ReturnType<typeof fetchRoomList>>
   >([]);
-  async function loadMore() {
-    const newRooms = await fetchRoomList(userId, 0, 10);
-    return newRooms;
-  }
+  const [isLoading, setIsLoading] = useState(true);
+  useEffect(() => {
+    async function loadMore() {
+      const newRooms = await fetchRoomList(userId);
+      setRoomsList(prev => [...prev, ...newRooms]);
+      setIsLoading(false);
+    }
+    loadMore();
+  }, [userId]);
+
   return (
     <div>
-      <Button
-        onClick={async () => {
-          const newRooms = await loadMore();
-          setRoomsList(prev => [...prev, ...newRooms]);
-        }}
-      >
-        Load More
-      </Button>
-      {JSON.stringify(roomsList)}
+      {isLoading ? (
+        <div>Loading...</div>
+      ) : (
+        roomsList.map(room => (
+          <div key={room.id}>
+            <Link href={`/room/${room.id}`}>{room.id}</Link>
+          </div>
+        ))
+      )}
     </div>
   );
 }

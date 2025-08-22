@@ -25,10 +25,10 @@ model Room {
   name           String
   createdAt      DateTime  @default(now())
   updatedAt      DateTime  @default(now()) @updatedAt
+  lastMessageAt  DateTime  @default(now())
   messages       Message[] @relation("roomMessages")
   users          User[]    @relation("UserRoom")
   administrators User[]    @relation("UserAdminRoom")
-
 }
 
 model Message {
