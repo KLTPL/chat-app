@@ -61,7 +61,6 @@ export async function login(
 
   await createSessionCookie({
     id: user.id,
-    email: user.email,
     username: user.username,
     name: user.name,
   });
@@ -131,7 +130,6 @@ export async function register(
 
   await createSessionCookie({
     id: userCreated.id,
-    email,
     username,
     name,
   });

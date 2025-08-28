@@ -1,10 +1,6 @@
 import { JWTPayload } from "jose";
+import { UserSessionData } from "./UserSessionData";
 
 export default interface SessionPayload extends JWTPayload {
-  user: {
-    id: string;
-    email: string;
-    username: string;
-    name: string;
-  };
+  user: UserSessionData;
 }

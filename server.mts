@@ -2,6 +2,8 @@ import { createServer } from "node:http";
 import next from "next";
 import { Server } from "socket.io";
 import Message from "@/types/Message";
+// import { saveMessage } from "@/lib/messages";
+import { UserSessionData } from "@/types/UserSessionData";
 
 const dev = process.env.NODE_ENV !== "production";
 const hostname = process.env.HOSTNAME || "localhost";
@@ -17,20 +19,33 @@ app.prepare().then(() => {
   io.on("connection", socket => {
     console.log(`User connected ${socket.id}`);
 
-    socket.on("join-room", ({ room, username }) => {
+    socket.on("join-room", ({ room, user }) => {
       socket.join(room);
-      console.log(`User ${username} joined room ${room}`);
+      console.log(`User ${user} joined room ${room}`);
 
-      socket.to(room).emit("user_joined", `${username} joined room`);
+      socket.to(room).emit("user_joined", `${user.username} joined room`);
     });
 
-    socket.on("message", ({ room, message, sender }) => {
-      console.log(`Messege from ${sender} in room ${room}: ${message}`);
-
-      socket
-        .to(room)
-        .emit("message", { sender, message, isFromSystem: false } as Message);
-    });
+    socket.on(
+      "message",
+      ({
+        room,
+        message,
+        user,
+      }: {
+        room: string;
+        message: string;
+        user: UserSessionData;
+      }) => {
+        console.log(
+          `Messege from ${user.username} in room ${room}: ${message}`
+        );
+        // saveMessage({messageType: ""});
+        socket
+          .to(room)
+          .emit("message", { user, message, isFromSystem: false } as Message);
+      }
+    );
 
     socket.on("disconnect", () => {
       console.log(`User disconnected ${socket.id}`);

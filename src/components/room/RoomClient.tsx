@@ -5,27 +5,27 @@ import RoomMessage from "@/components/room/RoomMessage";
 import { useEffect, useState } from "react";
 import { socket } from "@/lib/socketClient";
 import Message from "@/types/Message";
+import SessionPayload from "@/types/SessionPayload";
+import Prettify from "@/types/Prettify";
 
 export default function RoomClient({
   roomId,
-  username,
+  user,
 }: {
   roomId: string;
-  username: string;
+  user: Prettify<Pick<SessionPayload["user"], "id" | "name" | "username">>;
 }) {
   const [messages, setMessages] = useState<Message[]>([]);
   useEffect(() => {
-    socket.emit("join-room", { roomId, username });
-  }, [roomId, username]);
+    socket.emit("join-room", { roomId, user });
+  }, [roomId, user]);
   useEffect(() => {
     socket.on("user_joined", message => {
-      setMessages(prev => [
-        ...prev,
-        { isFromSystem: true, message, sender: "" },
-      ]);
+      setMessages(prev => [...prev, { isFromSystem: true, message, user }]);
     });
 
     socket.on("message", (message: Message) => {
+      console.log(message);
       setMessages(prev => [...prev, message]);
     });
     return () => {
@@ -34,11 +34,8 @@ export default function RoomClient({
     };
   });
   function onSendMessage(message: string) {
-    setMessages(prev => [
-      ...prev,
-      { sender: username, message, isFromSystem: false },
-    ]);
-    socket.emit("message", { sender: username, message, roomId });
+    setMessages(prev => [...prev, { user, message, isFromSystem: false }]);
+    socket.emit("message", { user, message, roomId });
   }
   return (
     <div className="flex mt-24 justify-center w-full">
@@ -49,8 +46,8 @@ export default function RoomClient({
             <RoomMessage
               isFromSystem={msgObj.isFromSystem}
               message={msgObj.message}
-              sender={msgObj.sender}
-              isOwnMessage={username === msgObj.sender}
+              user={msgObj.user}
+              isOwnMessage={user.id === msgObj.user.id}
               key={idx}
             />
           ))}

@@ -1,11 +1,14 @@
 import Message from "@/types/Message";
+import Prettify from "@/types/Prettify";
 import React from "react";
 
-type Props = Message & {
-  isOwnMessage: boolean;
-};
+type Props = Prettify<
+  Message & {
+    isOwnMessage: boolean;
+  }
+>;
 
-function RoomMessage({ isOwnMessage, message, sender, isFromSystem }: Props) {
+function RoomMessage({ isOwnMessage, message, user, isFromSystem }: Props) {
   return (
     <div
       className={`flex ${
@@ -26,7 +29,7 @@ function RoomMessage({ isOwnMessage, message, sender, isFromSystem }: Props) {
         }`}
       >
         {!isFromSystem && !isOwnMessage && (
-          <p className="text-sm font-bold">{sender}</p>
+          <p className="text-sm font-bold">{user.username}</p>
         )}
         <p>{message}</p>
       </div>

@@ -1,5 +1,8 @@
+import Prettify from "./Prettify";
+import { UserSessionData } from "./UserSessionData";
+
 export default interface Message {
-  sender: string;
+  user: Prettify<Pick<UserSessionData, "id" | "name" | "username">>;
   message: string;
   isFromSystem: boolean;
 }
