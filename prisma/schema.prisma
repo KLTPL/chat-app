@@ -32,11 +32,17 @@ model Room {
 }
 
 model Message {
-  id        Int      @id @default(autoincrement())
-  content   String
-  createdAt DateTime @default(now())
-  roomId    String
-  userId    String
-  room      Room     @relation("roomMessages", fields: [roomId], references: [id])
-  user      User     @relation("userMessages", fields: [userId], references: [id])
+  id          Int         @id @default(autoincrement())
+  content     String
+  createdAt   DateTime    @default(now())
+  roomId      String
+  userId      String
+  room        Room        @relation("roomMessages", fields: [roomId], references: [id])
+  user        User        @relation("userMessages", fields: [userId], references: [id])
+  messageType MessageType
+}
+
+enum MessageType {
+  MESSAGE
+  JOINED
 }

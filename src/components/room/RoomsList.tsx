@@ -12,7 +12,7 @@ export default function RoomsList({ userId }: { userId: string }) {
   useEffect(() => {
     async function loadMore() {
       const newRooms = await fetchRoomList(userId);
-      setRoomsList(prev => [...prev, ...newRooms]);
+      setRoomsList(newRooms);
       setIsLoading(false);
     }
     loadMore();
