@@ -1,58 +1,130 @@
 "use client";
 
-import RoomForm from "@/components/room/RoomForm";
-import RoomMessage from "@/components/room/RoomMessage";
-import { useEffect, useState } from "react";
+import RoomForm from "@/components/room/roomClient/RoomForm";
+import { useEffect, useRef, useState } from "react";
 import { socket } from "@/lib/socketClient";
-import Message from "@/types/Message";
-import SessionPayload from "@/types/SessionPayload";
-import Prettify from "@/types/Prettify";
+import Message, { MessageSending } from "@/types/Message";
+import { UserSessionData } from "@/types/UserSessionData";
+import { fetchMessagesFromRoom } from "@/server-actions/messagesFromRoom";
+import { v4 as uuid } from "uuid";
+import {
+  createCallbackForMessagesMapForRoomMessageComponent,
+  createCallbackForMessagesSendingMapForRoomMessageComponent,
+} from "./roomClient/messagesListCallbacks";
+import {
+  createOnMessageCallback,
+  createOnMessageSavedCallback,
+} from "./roomClient/socketOnCallback";
+
+function usePrevious(value: number) {
+  const ref = useRef<number | null>(null);
+  useEffect(() => {
+    ref.current = value;
+  }, [value]);
+  return ref.current;
+}
 
 export default function RoomClient({
   roomId,
   user,
+  roomName,
 }: {
   roomId: string;
-  user: Prettify<Pick<SessionPayload["user"], "id" | "name" | "username">>;
+  roomName: string;
+  user: UserSessionData;
 }) {
   const [messages, setMessages] = useState<Message[]>([]);
-  useEffect(() => {
-    socket.emit("join-room", { roomId, user });
-  }, [roomId, user]);
-  useEffect(() => {
-    socket.on("user_joined", message => {
-      setMessages(prev => [...prev, { isFromSystem: true, message, user }]);
-    });
+  const [messagesSending, setMessagesSending] = useState<MessageSending[]>([]);
+  const bottomMessages = useRef<null | HTMLDivElement>(null);
+  const messagesContainer = useRef<null | HTMLDivElement>(null);
+  const shouldScrollNextTime = useRef<boolean>(false);
+  const prevMessagesSendingLength = usePrevious(messagesSending.length); // used to check if new message was added or removed in useEffect
 
-    socket.on("message", (message: Message) => {
-      console.log(message);
-      setMessages(prev => [...prev, message]);
-    });
+  useEffect(() => {
+    socket.emit("join_room", { roomId });
+    (async () => {
+      const messages = await fetchMessagesFromRoom(roomId);
+      setMessages(messages);
+    })();
+  }, [roomId]);
+  useEffect(() => {
+    if (shouldScrollNextTime.current) {
+      bottomMessages.current?.scrollIntoView({ behavior: "smooth" });
+      shouldScrollNextTime.current = false;
+    }
+  }, [messages.length]);
+
+  useEffect(() => {
+    if (prevMessagesSendingLength === null) {
+      return;
+    } // first render
+    if (messagesSending.length > prevMessagesSendingLength) {
+      bottomMessages.current?.scrollIntoView({ behavior: "smooth" });
+    }
+  }, [messagesSending.length, prevMessagesSendingLength]);
+
+  useEffect(() => {
+    socket.on(
+      "message",
+      createOnMessageCallback(
+        messagesContainer,
+        shouldScrollNextTime,
+        setMessages
+      )
+    );
+    socket.on(
+      "messageSaved",
+      createOnMessageSavedCallback(
+        user,
+        setMessages,
+        messagesSending,
+        setMessagesSending
+      )
+    );
+
     return () => {
-      socket.off("user_joined");
       socket.off("message");
+      socket.off("messageSaved");
     };
-  });
-  function onSendMessage(message: string) {
-    setMessages(prev => [...prev, { user, message, isFromSystem: false }]);
-    socket.emit("message", { user, message, roomId });
+  }, [setMessages, messagesSending, user]);
+  function onSendMessage(content: string) {
+    const messageSending: MessageSending = {
+      clientId: uuid(),
+      content,
+      messageType: "SENDING",
+      sentAt: new Date(),
+    };
+    setMessagesSending(prev => [...prev, messageSending]);
+    socket.emit("message", {
+      user,
+      content,
+      roomId,
+      clientId: messageSending.clientId,
+    });
   }
+
   return (
-    <div className="flex mt-24 justify-center w-full">
-      <div className="w-full max-w-[500px] border p-3 rounded-md">
-        <h2>Room: {roomId}</h2>
-        <div>
-          {messages.map((msgObj, idx) => (
-            <RoomMessage
-              isFromSystem={msgObj.isFromSystem}
-              message={msgObj.message}
-              user={msgObj.user}
-              isOwnMessage={user.id === msgObj.user.id}
-              key={idx}
-            />
-          ))}
-          <RoomForm onSendMessage={onSendMessage} />
+    <div className="flex flex-col justify-center w-full pb-3 h-screen">
+      <h2 className="text-2xl">Room: {roomName}</h2>
+      <div
+        className="flex flex-col px-3 overflow-y-auto relative"
+        ref={messagesContainer}
+      >
+        {messages.map(
+          createCallbackForMessagesMapForRoomMessageComponent(user)
+        )}
+        {messagesSending.map(
+          createCallbackForMessagesSendingMapForRoomMessageComponent(user)
+        )}
+        <div className="flex justify-end text-sm text-muted-foreground">
+          {messagesSending.length > 0 ? (
+            <div>Sent</div>
+          ) : (
+            messages.at(-1)?.user.id === user.id && <div>Received</div>
+          )}
         </div>
+        <RoomForm onSendMessage={onSendMessage} />
+        <div ref={bottomMessages}></div>
       </div>
     </div>
   );

@@ -15,12 +15,12 @@ export default async function RootLayout({
   }
 
   return (
-    <div className="flex h-full">
-      <aside className="w-[25%] border-r-2">
+    <div className="flex h-screen overflow-hidden">
+      <aside className="w-[25%] h-full flex flex-col border-r-2 overflow-y-auto">
         <NewRoomButton userId={session.user.id} />
         <RoomsList userId={session.user.id} />
       </aside>
-      <main className="grow">{children}</main>
+      <main className="grow h-screen">{children}</main>
     </div>
   );
 }

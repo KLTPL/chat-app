@@ -1,6 +1,6 @@
 import React, { useRef, useState } from "react";
-import { Input } from "../ui/input";
-import { Button } from "../ui/button";
+import { Input } from "../../ui/input";
+import { Button } from "../../ui/button";
 
 type Props = { onSendMessage: (message: string) => void };
 
@@ -18,12 +18,16 @@ function RoomForm({ onSendMessage }: Props) {
     }
   }
   return (
-    <form className="flex mt-4 gap-2" onSubmit={handleSendMessage}>
+    <form
+      className="flex mt-4 gap-2 sticky bottom-0"
+      onSubmit={handleSendMessage}
+    >
       <Input
         type="text"
         onChange={ev => setMessage(ev.target.value)}
         placeholder="Message..."
         ref={inputRef}
+        className="bg-white"
       />
       <Button type="submit" className="bg-gray-800">
         Send

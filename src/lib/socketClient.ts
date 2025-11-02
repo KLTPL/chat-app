@@ -1,2 +1,3 @@
-import { io } from "socket.io-client";
-export const socket = io();
+import { ClientToServerEvents, ServerToClientEvents } from "@/types/socket";
+import { io, Socket } from "socket.io-client";
+export const socket: Socket<ServerToClientEvents, ClientToServerEvents> = io();

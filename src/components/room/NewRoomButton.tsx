@@ -7,16 +7,16 @@ export default function NewRoomButton({ userId }: { userId: string }) {
   return (
     <Button
       onClick={async () => {
-        const roomName = prompt("Podaj nazwę pokoju");
+        const roomName = prompt("Provide room name");
 
         await createNewRoom({
-          name: roomName || "super nowy room",
+          name: roomName || "Super new room",
           users: { connect: [{ id: userId }] },
           administrators: { connect: [{ id: userId }] },
         });
       }}
     >
-      Nowy Czat
+      New Room
     </Button>
   );
 }

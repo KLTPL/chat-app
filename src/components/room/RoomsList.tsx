@@ -19,13 +19,13 @@ export default function RoomsList({ userId }: { userId: string }) {
   }, [userId]);
 
   return (
-    <div>
+    <div className="grow">
       {isLoading ? (
         <div>Loading...</div>
       ) : (
-        roomsList.map(room => (
-          <div key={room.id}>
-            <Link href={`/room/${room.id}`}>{room.id}</Link>
+        [...roomsList, ...roomsList, ...roomsList].map((room, id) => (
+          <div key={id}>
+            <Link href={`/room/${room.id}`}>{room.name}</Link>
           </div>
         ))
       )}
