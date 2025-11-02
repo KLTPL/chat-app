@@ -1,33 +1,43 @@
 import React, { useRef, useState } from "react";
-import { Input } from "../../ui/input";
 import { Button } from "../../ui/button";
+import { Textarea } from "@/components/ui/textarea";
 
 type Props = { onSendMessage: (message: string) => void };
 
 function RoomForm({ onSendMessage }: Props) {
   const [message, setMessage] = useState<string>("");
-  const inputRef = useRef<HTMLInputElement>(null);
-  function handleSendMessage(ev: React.FormEvent<HTMLFormElement>) {
+  const textAreaRef = useRef<HTMLTextAreaElement>(null);
+  function handleSendMessage(ev: React.FormEvent) {
     ev.preventDefault();
     if (message.trim() !== "") {
       onSendMessage(message);
+      console.log(message);
       setMessage("");
-      if (inputRef?.current) {
-        inputRef.current.value = "";
+      if (textAreaRef?.current) {
+        textAreaRef.current.value = "";
       }
     }
   }
+
+  function handleTextAreaKeyDown(ev: React.KeyboardEvent<HTMLTextAreaElement>) {
+    if (ev.key === "Enter" && !ev.shiftKey) {
+      handleSendMessage(ev);
+    }
+  }
+
   return (
     <form
-      className="flex mt-4 gap-2 sticky bottom-0"
+      className="flex mt-4 gap-2 sticky bottom-0 justify-center w-full"
       onSubmit={handleSendMessage}
     >
-      <Input
-        type="text"
-        onChange={ev => setMessage(ev.target.value)}
+      <Textarea
+        onChange={ev => {
+          setMessage(ev.target.value);
+        }}
+        onKeyDown={handleTextAreaKeyDown}
         placeholder="Message..."
-        ref={inputRef}
-        className="bg-white"
+        ref={textAreaRef}
+        className="bg-white max-w-[70ch] min-h-[2em] max-h-[10em] resize-none overflow-y-auto"
       />
       <Button type="submit" className="bg-gray-800">
         Send

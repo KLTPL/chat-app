@@ -38,7 +38,7 @@ function RoomMessage({ message, user, marginTop }: Props) {
   const isOwnMessage =
     messageType === "SENDING" ||
     (messageType === "MESSAGE" && message.user.id === user.id);
-
+  console.log(message.content);
   return (
     <div
       style={{ marginTop: getMarginTopVal(marginTop) }}
@@ -62,7 +62,9 @@ function RoomMessage({ message, user, marginTop }: Props) {
         {!isFromSystem && !isOwnMessage && (
           <p className="text-sm font-bold">{user.username}</p>
         )}
-        <p>{content}</p>
+        <div>
+          <p className="whitespace-break-spaces">{content}</p>
+        </div>
       </div>
     </div>
   );
