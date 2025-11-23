@@ -33,12 +33,12 @@ function getMarginTopVal(marginTop: MarginTopRoomMessage) {
 
 function RoomMessage({ message, user, marginTop }: Props) {
   const { content, messageType } = message;
+  const date = messageType === "SENDING" ? message.sentAt : message.createdAt;
   // const {createdAt, id, user} = message;
   const isFromSystem = messageType === "JOINED";
   const isOwnMessage =
     messageType === "SENDING" ||
     (messageType === "MESSAGE" && message.user.id === user.id);
-  console.log(message.content);
   return (
     <div
       style={{ marginTop: getMarginTopVal(marginTop) }}
@@ -58,13 +58,12 @@ function RoomMessage({ message, user, marginTop }: Props) {
             ? "bg-blue-600 text-white"
             : "bg-green-300 text-black"
         }`}
+        title={date.toLocaleTimeString() + " " + date.toLocaleDateString()}
       >
         {!isFromSystem && !isOwnMessage && (
           <p className="text-sm font-bold">{user.username}</p>
         )}
-        <div>
-          <p className="whitespace-break-spaces">{content}</p>
-        </div>
+        <p className="whitespace-break-spaces">{content}</p>
       </div>
     </div>
   );
