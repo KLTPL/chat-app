@@ -45,6 +45,7 @@ export default function RoomClient({
     (async () => {
       const messages = await fetchMessagesFromRoom(roomId);
       setMessages(messages);
+      shouldScrollNextTime.current = true;
     })();
   }, [roomId]);
   useEffect(() => {

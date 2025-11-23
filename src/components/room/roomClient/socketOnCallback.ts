@@ -37,14 +37,14 @@ export function createOnMessageSavedCallback(
       messageSending => messageSending.clientId === messageSaved.clientId
     );
     if (messIdx === -1) {
-      console.error("Could not find message in messagesSending");
+      console.error("Could not find message in messagesSending"); // very nice console.error
       return;
     }
     const { content } = messagesSending[messIdx];
 
     setMessagesSending(prev => [
       ...prev.slice(0, messIdx),
-      ...prev.slice(messIdx, -1),
+      ...prev.slice(messIdx + 1, prev.length),
     ]);
     setMessages(prev => [
       ...prev,

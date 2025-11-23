@@ -11,7 +11,6 @@ function RoomForm({ onSendMessage }: Props) {
     ev.preventDefault();
     if (message.trim() !== "") {
       onSendMessage(message);
-      console.log(message);
       setMessage("");
       if (textAreaRef?.current) {
         textAreaRef.current.value = "";
