@@ -3,7 +3,7 @@
 import { jwtVerify, SignJWT } from "jose";
 import { cookies } from "next/headers";
 import { NextResponse } from "next/server";
-import { prisma } from "./prisma";
+import { prisma } from "./prisma/prisma";
 import bcrypt from "bcryptjs";
 import SessionPayload from "@/types/SessionPayload";
 

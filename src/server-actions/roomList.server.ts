@@ -1,6 +1,6 @@
 "use server";
 
-import { prisma } from "@/lib/prisma";
+import { prisma } from "@/lib/prisma/prisma";
 import { ExpandRecursively } from "@/types/Prettify";
 import { Prisma } from "@prisma/client";
 
