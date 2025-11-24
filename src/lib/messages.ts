@@ -7,7 +7,15 @@ export default async function saveMessage(
     Pick<Prisma.MessageCreateInput, "content" | "room" | "user" | "messageType">
   >
 ) {
-  return prisma.message.create({
+  const resMessage = await prisma.message.create({
     data,
   });
+
+  // Update room with new date of last message
+  await prisma.room.update({
+    where: { id: resMessage.roomId },
+    data: { lastMessageAt: resMessage.createdAt },
+  });
+
+  return resMessage;
 }

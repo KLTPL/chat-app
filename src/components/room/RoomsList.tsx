@@ -23,9 +23,23 @@ export default function RoomsList({ userId }: { userId: string }) {
       {isLoading ? (
         <div>Loading...</div>
       ) : (
-        [...roomsList, ...roomsList, ...roomsList].map((room, id) => (
+        roomsList.map((room, id) => (
           <div key={id}>
-            <Link href={`/room/${room.id}`}>{room.name}</Link>
+            <Link
+              href={`/room/${room.id}`}
+              className="flex flex-col hover:bg-gray-300 py-1 px-2 rounded-sm"
+            >
+              <div className="font-bold">{room.name}</div>
+              {room.messages.length === 0 ? ( // if room.messages.length > 0 theres only one message (the last one)
+                <div className="text-sm text-nowrap italic">
+                  New room created
+                </div>
+              ) : (
+                <div className="text-sm text-nowrap">
+                  {room.messages[0].user.name}: {room.messages[0].content}
+                </div>
+              )}
+            </Link>
           </div>
         ))
       )}
