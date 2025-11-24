@@ -1,5 +1,5 @@
 import Prettify from "@/types/Prettify";
-import { prisma } from "./prisma";
+import { prisma } from "./prisma/prisma";
 import { Prisma } from "@prisma/client";
 
 export default async function saveMessage(

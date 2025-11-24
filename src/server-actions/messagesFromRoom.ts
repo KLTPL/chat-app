@@ -1,5 +1,5 @@
 "use server";
-import { prisma } from "@/lib/prisma";
+import { prisma } from "@/lib/prisma/prisma";
 
 export async function fetchMessagesFromRoom(roomId: string) {
   const messages = await prisma.message.findMany({

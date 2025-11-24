@@ -1,6 +1,6 @@
 "use server";
 
-import { prisma } from "@/lib/prisma";
+import { prisma } from "@/lib/prisma/prisma";
 import Prettify from "@/types/Prettify";
 import { Prisma } from "@prisma/client";
 

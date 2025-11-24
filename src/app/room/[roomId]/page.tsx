@@ -1,6 +1,6 @@
 import RoomClient from "@/components/room/RoomClient";
 import { getSession } from "@/lib/auth";
-import { prisma } from "@/lib/prisma";
+import { prisma } from "@/lib/prisma/prisma";
 import { notFound } from "next/navigation";
 
 export default async function Room({
