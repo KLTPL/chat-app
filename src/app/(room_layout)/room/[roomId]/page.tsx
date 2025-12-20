@@ -15,6 +15,7 @@ export default async function Room({
   if (!session || !room) {
     notFound();
   }
+
   return (
     <RoomClient roomId={roomId} roomName={room.name} user={session.user} />
   );
