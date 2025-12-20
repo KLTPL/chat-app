@@ -1,5 +1,6 @@
 import { NextRequest, NextResponse } from "next/server";
 import { getSession, updateSession } from "./lib/auth";
+import { cookies } from "next/headers";
 
 const PUBLIC_PATHS = ["/login", "/register", "/api/public"];
 
@@ -15,6 +16,11 @@ export async function middleware(request: NextRequest) {
   if (!session) {
     return NextResponse.redirect(new URL("/login", request.url));
   }
+
+  if (pathname.startsWith("/room")) {
+    (await cookies()).set("last-room-path", pathname);
+  }
+
   return await updateSession(session);
 }
 
