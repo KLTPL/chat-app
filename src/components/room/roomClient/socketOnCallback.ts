@@ -6,7 +6,7 @@ import { UserSessionData } from "@/types/UserSessionData";
 export function createOnMessageCallback(
   messagesContainer: RefObject<HTMLDivElement | null>,
   shouldScrollNextTime: RefObject<boolean>,
-  setMessages: Dispatch<SetStateAction<Message[]>>
+  setMessages: Dispatch<SetStateAction<Message[]>>,
 ): ServerToClientEvents["message"] {
   return message => {
     if (messagesContainer.current) {
@@ -30,11 +30,11 @@ export function createOnMessageSavedCallback(
   user: UserSessionData,
   setMessages: Dispatch<SetStateAction<Message[]>>,
   messagesSending: MessageSending[],
-  setMessagesSending: Dispatch<SetStateAction<MessageSending[]>>
+  setMessagesSending: Dispatch<SetStateAction<MessageSending[]>>,
 ): ServerToClientEvents["messageSaved"] {
   return messageSaved => {
     const messIdx = messagesSending.findIndex(
-      messageSending => messageSending.clientId === messageSaved.clientId
+      messageSending => messageSending.clientId === messageSaved.clientId,
     );
     if (messIdx === -1) {
       console.error("Could not find message in messagesSending"); // very nice console.error

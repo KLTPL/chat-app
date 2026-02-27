@@ -1,5 +1,5 @@
 import RoomClient from "@/components/room/RoomClient";
-import { getSession } from "@/lib/auth";
+import { getSession } from "@/server-actions/auth";
 import { prisma } from "@/lib/prisma/prisma";
 import { notFound } from "next/navigation";
 

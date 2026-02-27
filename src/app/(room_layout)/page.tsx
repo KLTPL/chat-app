@@ -1,4 +1,4 @@
-import { getSession } from "@/lib/auth";
+import { getSession } from "@/server-actions/auth";
 import fetchRoomIdLatestMessage from "@/lib/prisma/roomIdLatestMessage";
 import { cookies } from "next/headers";
 import { redirect } from "next/navigation";

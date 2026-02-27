@@ -2,7 +2,6 @@
 
 import RoomForm from "@/components/room/roomClient/RoomForm";
 import { useCallback, useEffect, useRef, useState } from "react";
-import { socket } from "@/lib/socketClient";
 import Message, { MessageSending } from "@/types/Message";
 import { UserSessionData } from "@/types/UserSessionData";
 import { fetchMessagesFromRoom } from "@/server-actions/messagesFromRoom";
@@ -16,6 +15,7 @@ import {
   createOnMessageSavedCallback,
 } from "./roomClient/socketOnCallback";
 import LoadingArrow from "../ui/LoadSpinner";
+import { useSocket } from "@/context/SocketPrivider";
 
 function usePrevious(value: number) {
   const ref = useRef<number | null>(null);
@@ -34,6 +34,7 @@ export default function RoomClient({
   roomName: string;
   user: UserSessionData;
 }) {
+  const { socket } = useSocket();
   const [messages, setMessages] = useState<Message[]>([]);
   const [messagesSending, setMessagesSending] = useState<MessageSending[]>([]);
   const [isFetchingNewMessages, setIsFetchingNewMessages] =
@@ -54,7 +55,7 @@ export default function RoomClient({
     const newMessages = await fetchMessagesFromRoom(
       roomId,
       FETCH_AMOUNT,
-      messagesFetched.current
+      messagesFetched.current,
     );
     if (newMessages.length < FETCH_AMOUNT) {
       isFetchMoreMessagesMax.current = true;
@@ -83,10 +84,6 @@ export default function RoomClient({
     fetchMoreMessages,
     isFetchMoreMessagesMax,
   ]);
-
-  useEffect(() => {
-    socket.emit("join_room", { roomId });
-  }, [roomId]);
 
   useEffect(() => {
     const container = messagesContainer.current;
@@ -122,13 +119,14 @@ export default function RoomClient({
   }, [messagesSending.length, prevMessagesSendingLength]);
 
   useEffect(() => {
+    if (!socket) return;
     socket.on(
       "message",
       createOnMessageCallback(
         messagesContainer,
         shouldScrollNextTime,
-        setMessages
-      )
+        setMessages,
+      ),
     );
     socket.on(
       "messageSaved",
@@ -136,15 +134,15 @@ export default function RoomClient({
         user,
         setMessages,
         messagesSending,
-        setMessagesSending
-      )
+        setMessagesSending,
+      ),
     );
 
     return () => {
       socket.off("message");
       socket.off("messageSaved");
     };
-  }, [setMessages, messagesSending, user]);
+  }, [socket, setMessages, messagesSending, user]);
 
   useEffect(() => {
     const con = messagesContainer.current;
@@ -162,7 +160,8 @@ export default function RoomClient({
       sentAt: new Date(),
     };
     setMessagesSending(prev => [...prev, messageSending]);
-    socket.emit("message", {
+
+    socket?.emit("message", {
       user,
       content,
       roomId,
@@ -185,10 +184,10 @@ export default function RoomClient({
           </div>
         )}
         {messages.map(
-          createCallbackForMessagesMapForRoomMessageComponent(user)
+          createCallbackForMessagesMapForRoomMessageComponent(user),
         )}
         {messagesSending.map(
-          createCallbackForMessagesSendingMapForRoomMessageComponent(user)
+          createCallbackForMessagesSendingMapForRoomMessageComponent(user),
         )}
         <div className="flex justify-end text-sm text-muted-foreground">
           {messagesSending.length > 0 ? (

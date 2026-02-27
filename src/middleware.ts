@@ -1,5 +1,5 @@
 import { NextRequest, NextResponse } from "next/server";
-import { getSession, updateSession } from "./lib/auth";
+import { getSession, updateSession } from "@/server-actions/auth";
 import { cookies } from "next/headers";
 
 const PUBLIC_PATHS = ["/login", "/register", "/api/public"];
@@ -13,7 +13,8 @@ export async function middleware(request: NextRequest) {
 
   const session = await getSession();
 
-  if (!session) {
+  const now = Math.floor(Date.now() / 1000);
+  if (!session || !session.user || !session.exp || session.exp < now) {
     return NextResponse.redirect(new URL("/login", request.url));
   }
 

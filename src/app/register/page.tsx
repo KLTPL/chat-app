@@ -2,7 +2,7 @@
 
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
-import { register } from "@/lib/auth";
+import { register } from "@/server-actions/auth";
 import { useRouter } from "next/navigation";
 import { useActionState, useEffect } from "react";
 

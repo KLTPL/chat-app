@@ -4,10 +4,10 @@ import Prettify from "./Prettify";
 
 export interface ServerToClientEvents {
   message: (
-    data: Prettify<Omit<Message, "createdAt"> & { createdAt: number }>
+    data: Prettify<Omit<Message, "createdAt"> & { createdAt: number }>,
   ) => void;
   messageSaved: (
-    data: Prettify<Omit<MessageSaved, "createdAt"> & { createdAt: number }>
+    data: Prettify<Omit<MessageSaved, "createdAt"> & { createdAt: number }>,
   ) => void;
 }
 export interface ClientToServerEvents {
@@ -17,5 +17,6 @@ export interface ClientToServerEvents {
     content: string;
     clientId: string;
   }) => void;
-  join_room: (data: { roomId: string }) => void;
+  join_rooms: () => void;
+  // join_room: (data: { roomId: string }) => void;
 }
